@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
-import sys
 import optparse
+import sys
 
 import config
 from paletti import get_palette, print_palette, save_palette
@@ -8,14 +7,12 @@ from paletti import get_palette, print_palette, save_palette
 
 class PalettiApp(object):
     def __init__(self):
-        self.parser = self.create_option_parser()
+        self.parser = self.get_parser()
 
-    def create_option_parser(self):
-        usage = '\n'.join([
-            "%prog [options]",
-            "",
-            "Extract color palettes from image. "])
-        parser = optparse.OptionParser(usage)
+    def get_parser(self):
+        usage = 'python %prog [options]'
+        parser = optparse.OptionParser(usage=usage)
+
         parser.add_option(
             '-k',
             '--num-colors',
@@ -55,20 +52,18 @@ class PalettiApp(object):
         argv = sys.argv[1:]
         options, args = self.parser.parse_args(argv)
         if args:
-            for filename in args:
+            for fname in args:
                 try:
                     palette = get_palette(
-                        filename,
-                        k=options.num_colors,
-                        method=options.method,
+                        fname, k=options.num_colors, method=options.method,
                         color_format=options.color_format)
                 except Exception as e:
-                    print >> sys.stderr, filename, e
+                    print >> sys.stderr, fname, e
                     continue
-                print_palette(filename, palette, method=options.method,
+                print_palette(fname, palette, method=options.method,
                               color_format=options.color_format)
                 if options.save_palette:
-                    save_palette(filename, palette)
+                    save_palette(fname, palette)
             sys.exit(1)
 
 

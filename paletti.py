@@ -1,4 +1,3 @@
-""" Automatic color palette extraction from images. """
 from collections import namedtuple
 from colorama import init, Fore, Back, Style
 import colorific
@@ -31,14 +30,6 @@ def kmeans_palette(imfile, k=5):
     maincolors = (maincolors.reshape((k, 1, 3)) * 255).astype('uint8')
     maincolors = cv2.cvtColor(maincolors, cv2.COLOR_LAB2RGB)
     maincolors = maincolors.astype('float64') / 255.
-
-    # # Compute the reduced colors image
-    # clusterim = np.zeros(img.shape)
-    # labidx = 0
-    # for i in xrange(w):
-    #     for j in xrange(h):
-    #         clusterim[i, j] = maincolors[labels[labidx]]
-    #         labidx += 1
 
     # Compute percentage of each main color
     percent, _ = np.histogram(labels, bins=len(maincolors), normed=True)
@@ -116,6 +107,7 @@ def complementary_color(incolor):
 
 
 def get_palette(fname, k=5, method='k-means', color_format='rgb'):
+    """ Extract a color palette from an image using the specified method. """
     if method == 'k-means':
         return kmeans_palette(fname, k=k)
     elif method == 'colorific':
@@ -127,6 +119,7 @@ def get_palette(fname, k=5, method='k-means', color_format='rgb'):
 
 
 def print_palette(fname, palette, method, color_format):
+    """ Print palette colors. """
     maincolors = [(np.asarray(c) * 255).astype('uint8')
                   for c in palette.colors]
     print('Color palette of ' + Fore.CYAN + Style.BRIGHT + '{}'.format(fname)
