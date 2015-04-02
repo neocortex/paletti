@@ -1,5 +1,5 @@
 from collections import namedtuple
-from colorama import init, Fore, Back, Style
+from colorama import init, Fore, Style
 import colorific
 import cv2
 import json
@@ -92,7 +92,7 @@ def complementary_color(incolor):
     return comp.join()
 
 
-def get_palette(fname, k=5, method='k-means', color_format='rgb'):
+def get_palette(fname, k=5, method='k-means'):
     """ Extract a color palette from an image using the specified method. """
     if method == 'k-means':
         return kmeans_palette(fname, k=k)
@@ -104,12 +104,11 @@ def get_palette(fname, k=5, method='k-means', color_format='rgb'):
         return pictaculous_palette(fname)
 
 
-def print_palette(fname, palette, method, color_format):
+def print_palette(fname, palette, method):
     """ Print palette colors. """
     print('\nColor palette of ' + Fore.CYAN + Style.BRIGHT + '{}'.format(fname)
           + Style.RESET_ALL + ' using ' + Fore.CYAN + Style.BRIGHT
           + '{}'.format(method) + Style.RESET_ALL + ':\n')
-
     table = PrettyTable(
         [Fore.CYAN + Style.BRIGHT + "rgb" + Style.RESET_ALL,
          Fore.CYAN + Style.BRIGHT + "hex" + Style.RESET_ALL,

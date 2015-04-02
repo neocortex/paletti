@@ -30,14 +30,6 @@ class PalettiApp(object):
             default=False,
             help="Plot and store the palette in an image file")
         parser.add_option(
-            '-f',
-            '--color-format',
-            action='store',
-            dest='color_format',
-            default=config.COLOR_FORMAT,
-            help="The output format of the colors [{}]".format(
-                config.COLOR_FORMAT))
-        parser.add_option(
             '-m',
             '--method',
             action='store',
@@ -55,13 +47,11 @@ class PalettiApp(object):
             for fname in args:
                 try:
                     palette = get_palette(
-                        fname, k=options.num_colors, method=options.method,
-                        color_format=options.color_format)
+                        fname, k=options.num_colors, method=options.method)
                 except Exception as e:
                     print >> sys.stderr, fname, e
                     continue
-                print_palette(fname, palette, method=options.method,
-                              color_format=options.color_format)
+                print_palette(fname, palette, method=options.method)
                 if options.save_palette:
                     create_palette(palette, outname=fname)
             sys.exit(1)
