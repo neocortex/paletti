@@ -10,7 +10,7 @@ class PalettiApp(object):
         self.parser = self.get_parser()
 
     def get_parser(self):
-        usage = 'python %prog [options]'
+        usage = 'python %prog [options] IMAGE_FILE'
         parser = optparse.OptionParser(usage=usage)
 
         parser.add_option(
@@ -20,7 +20,7 @@ class PalettiApp(object):
             dest='num_colors',
             type='int',
             default=config.NUM_COLORS,
-            help='The maximum number of colors to output per palette [{}]'
+            help='The maximum number of colors per palette [{}].'
                  .format(config.NUM_COLORS))
         parser.add_option(
             '-o',
@@ -28,15 +28,16 @@ class PalettiApp(object):
             action='store_true',
             dest='save_palette',
             default=False,
-            help="Plot and store the palette in an image file")
+            help="Plot and store the palette in an image file.")
         parser.add_option(
             '-m',
             '--method',
             action='store',
             dest='method',
             default=config.METHOD,
-            help="The method used to extract the color palette [{}]".format(
-                config.METHOD))
+            help="The method used to extract the color palette. Can be 'k-"
+                 "means', 'colorific', 'pil', or 'pictaculous'. Default is 'k-"
+                 "means'.".format(config.METHOD))
 
         return parser
 
