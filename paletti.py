@@ -5,10 +5,10 @@ import cv2
 import json
 import numpy as np
 from PIL import Image, ImageDraw
+from prettytable import PrettyTable
 import requests
 import os.path as osp
 from sklearn.cluster import KMeans
-import sys
 
 init()
 
@@ -106,20 +106,21 @@ def get_palette(fname, k=5, method='k-means', color_format='rgb'):
 
 def print_palette(fname, palette, method, color_format):
     """ Print palette colors. """
-    maincolors = [(np.asarray(c) * 255).astype('uint8')
-                  for c in palette.colors]
-    print('Color palette of ' + Fore.CYAN + Style.BRIGHT + '{}'.format(fname)
-          + Style.RESET_ALL + ' using ' + Back.BLUE + Fore.WHITE + Style.BRIGHT
-          + '{}'.format(method) + Style.RESET_ALL + ':')
-    if color_format == 'hex':
-        maincolors = [rgb2hex(tuple(c)) for c in maincolors]
-    print '\n'
-    for i, c in enumerate(maincolors):
-        print('\t' + '{} '.format(color_format) + Fore.BLACK + Back.WHITE +
-              Style.BRIGHT + str(c) + Style.RESET_ALL + '\t{:.2}'.format(
-                palette.percent[i]))
-    print '\n'
-    sys.stdout.flush()
+    print('\nColor palette of ' + Fore.CYAN + Style.BRIGHT + '{}'.format(fname)
+          + Style.RESET_ALL + ' using ' + Fore.CYAN + Style.BRIGHT
+          + '{}'.format(method) + Style.RESET_ALL + ':\n')
+
+    table = PrettyTable(
+        [Fore.CYAN + Style.BRIGHT + "rgb" + Style.RESET_ALL,
+         Fore.CYAN + Style.BRIGHT + "hex" + Style.RESET_ALL,
+         Fore.CYAN + Style.BRIGHT + "proportion" + Style.RESET_ALL],
+        padding_width=5)
+    rgbs = [(np.asarray(c) * 255).astype('uint8') for c in palette.colors]
+    hexs = [rgb2hex(tuple(c)) for c in rgbs]
+    for rgb, h, p in zip(rgbs, hexs, palette.percent):
+        table.add_row(
+            ['({:3}, {:3}, {:3})'.format(*tuple(rgb)), h, '{:.2}'.format(p)])
+    print table
 
 
 def create_palette(palette, outname='palette.png', save=True, size=(300, 80)):
@@ -139,4 +140,6 @@ def create_palette(palette, outname='palette.png', save=True, size=(300, 80)):
         return img
     if not outname.endswith('.png'):
         outname = '{}_palette.png'.format(osp.splitext(outname)[0])
+        print('\nPalette saved in' + Fore.CYAN + Style.BRIGHT + ' {} ...\n'
+              .format(outname))
     img.save(outname, "PNG")
