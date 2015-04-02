@@ -4,8 +4,9 @@ import colorific
 import cv2
 import json
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
 import requests
+import os.path as osp
 from sklearn.cluster import KMeans
 import sys
 
@@ -72,21 +73,6 @@ def pictaculous_palette(imfile):
     return Palette(maincolors, [1.0 / len(maincolors)] * len(maincolors))
 
 
-def create_palette(maincolors, percent=None):
-    """ Create a palette plot using a list of colors and their relative
-        occurence.
-    """
-    palette = np.zeros((50, 300, 3))
-    start_x = 0
-    if percent is None:
-        percent = [1.0 / len(maincolors)] * len(maincolors)
-    for (percent, color) in zip(percent, maincolors):
-        end_x = start_x + (percent * 300)
-        cv2.rectangle(palette, (int(start_x), 0), (int(end_x), 50), color, -1)
-        start_x = end_x
-    return palette
-
-
 def hex2rgb(hexcolor):
     value = hexcolor.lstrip('#') if hexcolor.startswith('#') else hexcolor
     lv = len(value)
@@ -136,5 +122,21 @@ def print_palette(fname, palette, method, color_format):
     sys.stdout.flush()
 
 
-def save_palette(palette):
-    print 'saving palette'
+def create_palette(palette, outname='palette.png', save=True, size=(300, 80)):
+    """ Create (and save) palette. """
+    width, height = size
+    img = Image.new('RGB', size)
+    draw = ImageDraw.Draw(img)
+    maincolors = [(np.array(c) * 255).astype('uint8') for c in palette.colors]
+    start_x = 0
+    for c, p in zip(maincolors, palette.percent):
+        end_x = start_x + (p * width)
+        (x1, y1) = (start_x, 0)
+        (x2, y2) = (end_x, height-1)
+        draw.rectangle([(x1, y1), (x2, y2)], fill=tuple(c))
+        start_x = end_x
+    if not save:
+        return img
+    if not outname.endswith('.png'):
+        outname = '{}_palette.png'.format(osp.splitext(outname)[0])
+    img.save(outname, "PNG")

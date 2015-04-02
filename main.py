@@ -2,7 +2,7 @@ import optparse
 import sys
 
 import config
-from paletti import get_palette, print_palette, save_palette
+from paletti import get_palette, print_palette, create_palette
 
 
 class PalettiApp(object):
@@ -63,7 +63,7 @@ class PalettiApp(object):
                 print_palette(fname, palette, method=options.method,
                               color_format=options.color_format)
                 if options.save_palette:
-                    save_palette(fname, palette)
+                    create_palette(palette, outname=fname)
             sys.exit(1)
 
 
