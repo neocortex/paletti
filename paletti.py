@@ -1,7 +1,6 @@
 from collections import namedtuple
 from colorama import init, Fore, Style
 import colorific
-import cv2
 import json
 import numpy as np
 from PIL import Image, ImageDraw
@@ -10,6 +9,8 @@ import requests
 import os.path as osp
 from sklearn.cluster import KMeans
 
+from utils import lab2rgb, rgb2lab
+
 init()
 
 Palette = namedtuple('Palette', 'colors percent')
@@ -17,8 +18,8 @@ Palette = namedtuple('Palette', 'colors percent')
 
 def kmeans_palette(imfile, k=5):
     """ Extract a color palette using k-means clustering. """
-    origimg = cv2.cvtColor(cv2.imread(imfile), cv2.COLOR_BGR2LAB)
-    img = origimg.astype('float64') / 255.
+    origimg = np.asarray(Image.open(imfile))
+    img = rgb2lab(origimg)
 
     w, h, d = tuple(img.shape)
     assert d == 3
@@ -28,8 +29,8 @@ def kmeans_palette(imfile, k=5):
     kmeans = KMeans(n_clusters=k, n_jobs=-1).fit(imarr)
     labels = kmeans.predict(imarr)
     maincolors = kmeans.cluster_centers_
-    maincolors = (maincolors.reshape((k, 1, 3)) * 255).astype('uint8')
-    maincolors = cv2.cvtColor(maincolors, cv2.COLOR_LAB2RGB)
+    maincolors = np.expand_dims(maincolors, axis=0)
+    maincolors = lab2rgb(maincolors).squeeze()
     maincolors = maincolors.astype('float64') / 255.
 
     # Compute percentage of each main color
