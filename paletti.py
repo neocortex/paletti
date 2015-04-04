@@ -9,7 +9,7 @@ import requests
 import os.path as osp
 from sklearn.cluster import KMeans
 
-from utils import lab2rgb, rgb2lab
+from utils import hex2rgb, lab2rgb, rgb2hex, rgb2lab
 
 init()
 
@@ -72,16 +72,6 @@ def pictaculous_palette(imfile):
     maincolors = data['info']['colors']
     maincolors = np.asarray([hex2rgb(c) for c in maincolors]) / 255.
     return Palette(maincolors, [1.0 / len(maincolors)] * len(maincolors))
-
-
-def hex2rgb(hexcolor):
-    value = hexcolor.lstrip('#') if hexcolor.startswith('#') else hexcolor
-    lv = len(value)
-    return [int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3)]
-
-
-def rgb2hex(rgb):
-    return '#%02x%02x%02x' % rgb
 
 
 def complementary_color(incolor):

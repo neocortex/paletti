@@ -118,3 +118,15 @@ def lab2xyz(image):
     Z = 108.883 * var_Z
 
     return np.transpose(np.array([X, Y, Z]), (1, 2, 0))
+
+
+def hex2rgb(hexcolor):
+    """ Convert a color in Hex format to RGB. """
+    value = hexcolor.lstrip('#') if hexcolor.startswith('#') else hexcolor
+    lv = len(value)
+    return [int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3)]
+
+
+def rgb2hex(rgb):
+    """ Convert an RGB color to Hex format. """
+    return '#%02x%02x%02x' % rgb
