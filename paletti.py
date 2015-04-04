@@ -53,11 +53,10 @@ def pil_palette(imfile, k=5):
     rsize = 150
     image = Image.open(imfile)
     image = image.resize((rsize, rsize))
-    result = image.convert('P', palette=Image.ADAPTIVE, colors=k)
-    result.putalpha(0)
+    result = image.convert(
+        'P', palette=Image.ADAPTIVE, colors=k).convert('RGB')
     res = result.getcolors(rsize * rsize)
-
-    maincolors = np.asarray([list(x[1][:-1]) for x in res]) / 255.
+    maincolors = np.asarray([x[1] for x in res]) / 255.
     percent = np.asarray([x[0] for x in res], dtype='float')
     percent /= percent.sum()
 
