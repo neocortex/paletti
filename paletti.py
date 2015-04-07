@@ -14,12 +14,14 @@ from utils import hex2rgb, lab2rgb, rgb2hex, rgb2lab
 init()
 
 Palette = namedtuple('Palette', 'colors percent')
+RSIZE = 200
 
 
-def kmeans_palette(imfile, k=5):
+def kmeans_palette(fname, k=5):
     """ Extract a color palette using k-means clustering. """
-    origimg = np.asarray(Image.open(imfile))
-    img = rgb2lab(origimg)
+    origimg = Image.open(fname)
+    origimg.thumbnail((RSIZE, RSIZE), Image.ANTIALIAS)
+    img = rgb2lab(np.asarray(origimg))
 
     w, h, d = tuple(img.shape)
     assert d == 3
@@ -40,22 +42,21 @@ def kmeans_palette(imfile, k=5):
     return Palette(maincolors.squeeze(), percent)
 
 
-def colorific_palette(imfile, k=5):
+def colorific_palette(fname, k=5):
     """ Extract a color palette using colorific. """
-    result = np.asarray(colorific.extract_colors(imfile, max_colors=k)[0])
+    result = np.asarray(colorific.extract_colors(fname, max_colors=k)[0])
     maincolors = np.asarray([list(c) for c in result[:, 0]]) / 255.
     percent = result[:, 1] / np.sum(result[:, 1])
     return Palette(maincolors, percent)
 
 
-def pil_palette(imfile, k=5):
+def pil_palette(fname, k=5):
     """ Extract a color palette using PIL. """
-    rsize = 150
-    image = Image.open(imfile)
-    image = image.resize((rsize, rsize))
+    image = Image.open(fname)
+    image.thumbnail((RSIZE, RSIZE), Image.ANTIALIAS)
     result = image.convert(
         'P', palette=Image.ADAPTIVE, colors=k).convert('RGB')
-    res = result.getcolors(rsize * rsize)
+    res = result.getcolors(RSIZE ** 2)
     maincolors = np.asarray([x[1] for x in res]) / 255.
     percent = np.asarray([x[0] for x in res], dtype='float')
     percent /= percent.sum()
@@ -63,10 +64,10 @@ def pil_palette(imfile, k=5):
     return Palette(maincolors, percent)
 
 
-def pictaculous_palette(imfile):
+def pictaculous_palette(fname):
     """ Extract a color palette using the pictaculous API. """
     endpoint = 'http://pictaculous.com/api/1.0/'
-    r = requests.post(endpoint, {'image': open(imfile, 'rb').read()})
+    r = requests.post(endpoint, {'image': open(fname, 'rb').read()})
     data = json.loads(r.text)
     maincolors = data['info']['colors']
     maincolors = np.asarray([hex2rgb(c) for c in maincolors]) / 255.
