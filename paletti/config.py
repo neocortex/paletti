@@ -1,2 +1,2 @@
-NUM_COLORS = 5
 METHOD = 'k-means'
+NUM_COLORS = 5

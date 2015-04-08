@@ -1,8 +1,8 @@
 import optparse
 import sys
 
-import config
-from paletti import get_palette, print_palette, create_palette
+from config import METHOD, NUM_COLORS
+from paletti import create_palette, get_palette, print_palette
 
 
 class PalettiApp(object):
@@ -19,9 +19,18 @@ class PalettiApp(object):
             action='store',
             dest='num_colors',
             type='int',
-            default=config.NUM_COLORS,
+            default=NUM_COLORS,
             help='The maximum number of colors per palette [{}].'
-                 .format(config.NUM_COLORS))
+                 .format(NUM_COLORS))
+        parser.add_option(
+            '-m',
+            '--method',
+            action='store',
+            dest='method',
+            default=METHOD,
+            help="The method used to extract the color palette. Can be 'k-"
+                 "means', 'colorific', 'pil', or 'pictaculous'. Default is 'k-"
+                 "means'.".format(METHOD))
         parser.add_option(
             '-o',
             '--output',
@@ -29,15 +38,6 @@ class PalettiApp(object):
             dest='save_palette',
             default=False,
             help="Plot and store the palette in an image file.")
-        parser.add_option(
-            '-m',
-            '--method',
-            action='store',
-            dest='method',
-            default=config.METHOD,
-            help="The method used to extract the color palette. Can be 'k-"
-                 "means', 'colorific', 'pil', or 'pictaculous'. Default is 'k-"
-                 "means'.".format(config.METHOD))
 
         return parser
 
@@ -50,12 +50,15 @@ class PalettiApp(object):
                     palette = get_palette(
                         fname, k=options.num_colors, method=options.method)
                 except Exception as e:
-                    print >> sys.stderr, fname, e
+                    print 'Skipping \'{}\': {}.'.format(fname, e)
                     continue
                 print_palette(fname, palette, method=options.method)
                 if options.save_palette:
                     create_palette(palette, outname=fname)
-            sys.exit(1)
+        else:
+            print 'No image file specified --'
+            print self.parser.get_usage()
+        sys.exit(1)
 
 
 def main():

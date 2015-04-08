@@ -22,11 +22,9 @@ def kmeans_palette(fname, k=5):
     origimg = Image.open(fname)
     origimg.thumbnail((RSIZE, RSIZE), Image.ANTIALIAS)
     img = rgb2lab(np.asarray(origimg))
-
     w, h, d = tuple(img.shape)
     assert d == 3
     imarr = np.reshape(img, (w * h, d))
-
     # Perform k-means clustering
     kmeans = KMeans(n_clusters=k, n_jobs=-1).fit(imarr)
     labels = kmeans.predict(imarr)
@@ -34,11 +32,9 @@ def kmeans_palette(fname, k=5):
     maincolors = np.expand_dims(maincolors, axis=0)
     maincolors = lab2rgb(maincolors).squeeze()
     maincolors = maincolors.astype('float64') / 255.
-
     # Compute percentage of each main color
     percent, _ = np.histogram(labels, bins=len(maincolors), normed=True)
     percent /= float(percent.sum())
-
     return Palette(maincolors.squeeze(), percent)
 
 
@@ -72,15 +68,6 @@ def pictaculous_palette(fname):
     maincolors = data['info']['colors']
     maincolors = np.asarray([hex2rgb(c) for c in maincolors]) / 255.
     return Palette(maincolors, [1.0 / len(maincolors)] * len(maincolors))
-
-
-def complementary_color(incolor):
-    """ Compute the complementary RGB color. """
-    if incolor.startswith('#'):
-        incolor = incolor[1:]
-    rgb = (incolor[0:2], incolor[2:4], incolor[4:6])
-    comp = ['02%X' % (255 - int(a, 16)) for a in rgb]
-    return comp.join()
 
 
 def get_palette(fname, k=5, method='k-means'):
