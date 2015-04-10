@@ -1,0 +1,7 @@
+colorama==0.3.3
+colorific==0.3
+networkx==1.9.1
+prettytable==0.7.2
+requests==2.6.0
+scikit-learn==0.16.0
+scipy==0.15.1
