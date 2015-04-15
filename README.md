@@ -29,17 +29,8 @@ Type ``paletti --help`` for all available options.
 
 The extracted colors are print as a pretty table to stdout:
 
-Color palette of images/test_img.jpg using pil:
+![alt tag](https://github.com/neocortex/paletti/blob/master/images/stdout.png)
 
-+-------------------------+-----------------+--------------------+
-|           rgb           |       hex       |     proportion     |
-+-------------------------+-----------------+--------------------+
-|     (251, 212, 164)     |     #fbd4a4     |        0.15        |
-|     (243, 192, 128)     |     #f3c080     |        0.14        |
-|     (236, 158,  79)     |     #ec9e4f     |        0.22        |
-|     (213, 101,  45)     |     #d5652d     |        0.24        |
-|     (177,  29,  15)     |     #b11d0f     |        0.25        |
-+-------------------------+-----------------+--------------------+
 
 If the output tag is set, the palette is save as an image:
 
@@ -52,5 +43,9 @@ If the output tag is set, the palette is save as an image:
 ![alt tag](https://github.com/neocortex/paletti/blob/master/images/colorific_palette.png)
 
 * Pictaculous palette
+
+![alt tag](https://github.com/neocortex/paletti/blob/master/images/pictaculous_palette.png)
+
+* K-Means palette
 
 ![alt tag](https://github.com/neocortex/paletti/blob/master/images/kmeans_palette.png)
