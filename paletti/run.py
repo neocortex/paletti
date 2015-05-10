@@ -1,5 +1,8 @@
 import optparse
 import sys
+from tempfile import NamedTemporaryFile
+
+import requests
 
 from config import METHOD, NUM_COLORS
 from paletti import create_palette, get_palette, print_palette
@@ -34,6 +37,13 @@ class PalettiApp(object):
                  "chosen, a color-reduced image with the specified number of "
                  "colors is saved to disk.".format(METHOD))
         parser.add_option(
+            '-u',
+            '--url',
+            action='store_true',
+            dest='url',
+            default=False,
+            help="Image to be analyzed is a URL.")
+        parser.add_option(
             '-o',
             '--output',
             action='store_true',
@@ -49,6 +59,12 @@ class PalettiApp(object):
         if args:
             for fname in args:
                 try:
+                    if options.url:
+                        response = requests.get(fname)
+                        f = NamedTemporaryFile(delete=False)
+                        f.write(response.content)
+                        f.close()
+                        fname = f.name
                     palette = get_palette(
                         fname, k=options.num_colors, method=options.method)
                 except Exception as e:
