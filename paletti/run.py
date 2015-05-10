@@ -30,7 +30,9 @@ class PalettiApp(object):
             default=METHOD,
             help="The method used to extract the color palette. Can be 'k-"
                  "means', 'colorific', 'pil', or 'pictaculous'. Default is 'k-"
-                 "means'.".format(METHOD))
+                 "means'. In addition to the color palette, if 'k-means' is "
+                 "chosen, a color-reduced image with the specified number of "
+                 "colors is saved to disk.".format(METHOD))
         parser.add_option(
             '-o',
             '--output',
