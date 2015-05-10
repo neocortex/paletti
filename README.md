@@ -49,3 +49,7 @@ If the output tag is set, the palette is save as an image:
 * K-Means palette
 
 ![alt tag](https://github.com/neocortex/paletti/blob/master/images/kmeans_palette.png)
+
+* The color-reduced image computed when choosing K-Means as method
+![alt
+tag](https://github.com/neocortex/paletti/blob/master/images/kmeans_image.png)

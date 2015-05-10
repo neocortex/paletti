@@ -14,7 +14,7 @@ from utils import hex2rgb, lab2rgb, rgb2hex, rgb2lab
 init()
 
 Palette = namedtuple('Palette', 'colors percent')
-RSIZE = 200
+RSIZE = 600
 
 
 def kmeans_palette(fname, k=5):
@@ -32,6 +32,13 @@ def kmeans_palette(fname, k=5):
     maincolors = np.expand_dims(maincolors, axis=0)
     maincolors = lab2rgb(maincolors).squeeze()
     maincolors = maincolors.astype('float64') / 255.
+    # Save clustered image
+    cluster_img = np.zeros(imarr.shape, dtype='float')
+    for i, lab in enumerate(labels):
+        cluster_img[i] = maincolors[lab]
+    Image.fromarray(
+        (np.reshape(cluster_img, (w, h, 3)) * 255).astype(
+            'uint8')).save('{}_clustered.png'.format(osp.splitext(fname)[0]))
     # Compute percentage of each main color
     percent, _ = np.histogram(labels, bins=len(maincolors), normed=True)
     percent /= float(percent.sum())
@@ -56,7 +63,6 @@ def pil_palette(fname, k=5):
     maincolors = np.asarray([x[1] for x in res]) / 255.
     percent = np.asarray([x[0] for x in res], dtype='float')
     percent /= percent.sum()
-
     return Palette(maincolors, percent)
 
 
